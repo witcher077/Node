@@ -1,0 +1,83 @@
+
+**********************Notes 1*****************
+// different way to write routes
+// "use?r" => usr
+// "use*r" => useeklfd;dldkddr
+// "use+r" => useeddr
+// "u(se)+r" => useseseseddr
+
+app.get('/user', (req, res) => {
+    console.log(req.query);
+    
+    res.send({
+        Name: "Ashok Kumar",
+        city: "benglore"
+    })
+})
+
+app.post('/user', (req, res) => {
+    res.send("Data saved in DB")
+})
+
+app.delete('/user', (req, res) => {
+    res.send("User Deleted from DB")
+})
+
+app.use('/', (req, res) => {
+    res.send("Hello from Node")
+})
+
+
+
+***************************Middleware**********************
+const express = require('express');
+
+const { AdminAuth, UserAuth } = require("./middlewares/Auth")
+
+const app = express();
+
+
+app.use("/admin", AdminAuth)
+
+app.get('/admin/getAllUsers', (req, res) => {
+    res.send("All users")
+})
+
+app.get('/user', UserAuth, (req, res) => {
+    res.send("I am a user")
+})
+
+app.listen(7777, () => {
+    console.log("Listening on prt 3000");
+
+})
+
+
+
+
+
+const AdminAuth = (req, res, next) => {
+    console.log("Admin Auth is getting checked")
+    const token = "xyaz";
+    const Authenticated = token === "xyz";
+    if (!Authenticated) {
+        res.status(401).send("Unautherized request")
+    }
+    else {
+        next()
+    }
+}
+
+const UserAuth = (req, res, next) => {
+    console.log("User Auth is getting checked")
+    const token = "xyz";
+    const Authenticated = token === "xyz";
+    if (!Authenticated) {
+        res.status(401).send("Unautherized User")
+    }
+    else {
+        next()
+    }
+}
+
+module.exports = { AdminAuth, UserAuth }
